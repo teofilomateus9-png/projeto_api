@@ -1,10 +1,36 @@
 // use prisma-8
-// Arquivo: src/prisma/contract.prisma
+// Contract inferred from the live database schema. Edit as needed, then run `prisma contract emit`.
+
+model Cliente {
+  idCliente    Int          @id(map: "cliente_pkey") @default(autoincrement()) @map("id_cliente")
+  emailCliente VarChar?     @map("email_cliente")
+  nomeCliente  VarChar?     @map("nome_cliente")
+  telClientes  TelCliente[]
+
+  @@map("cliente")
+}
+
+model TelCliente {
+  idTelCliente Int      @id(map: "tel_cliente_pkey") @default(autoincrement()) @map("id_tel_cliente")
+  idCliente    Int?     @map("id_cliente")
+  cliente      Cliente? @relation(fields: [idCliente], references: [idCliente], map: "cliente_fk", index: false)
+
+  @@map("tel_cliente")
+}
+
+model Teste {
+  idTeste  Int      @id(map: "idTeste_pkey") @default(autoincrement()) @map("id_Teste")
+  nomeTest VarChar? @map("nome_test")
+
+  @@map("teste")
+}
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
+  id        Int         @id(map: "user_pkey") @default(autoincrement())
+  createdAt Timestamptz @default(now())
+  email     String      @unique(map: "user_email_key")
   name      String?
   password  String
-  createdAt DateTime @default(now())
+
+  @@map("user")
 }
