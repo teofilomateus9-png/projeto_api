@@ -1,6 +1,7 @@
 // Arquivo: src/middlewares/error.middleware.ts
 import type { ErrorRequestHandler } from 'express';
 import { HttpError } from '../lib/http-error.js';
+import { logger } from '../config/logger.js';
 
 export const errorHandler: ErrorRequestHandler = (error: unknown, _req, res, next) => {
   if (res.headersSent) return next(error);
@@ -22,6 +23,9 @@ export const errorHandler: ErrorRequestHandler = (error: unknown, _req, res, nex
       return;
     }
   }
-  console.error('Erro interno na API:', error);
+  logger.error('Erro interno na API.', {
+    errorType: error instanceof Error ? error.name : 'unknown',
+    sqlState: typeof error === 'object' && error !== null && 'sqlState' in error ? error.sqlState : undefined,
+  });
   res.status(500).json({ error: 'Erro interno do servidor.' });
 };
